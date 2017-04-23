@@ -93,7 +93,7 @@ public static class Utilities
 
 		return new Tuple<List<K>, T, float>(bestOrdering, bestAssignment, bestScore);
 	}
-	
+
 	public static HashSet<List<T>> GetAllPermutations<T> (ICollection<T> collect)
 	{
 		//Clone the original input to ensure non-destructibility
