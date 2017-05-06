@@ -7,6 +7,7 @@ public class Button : MyMonoBehaviour
 {
     public bool shrink = false;
     public bool move = false;
+    public string moveAxis = "x";
     bool pushable;
     public bool pushed;
     public GameObject actionTarget;
@@ -28,25 +29,37 @@ public class Button : MyMonoBehaviour
         pushed = false;
 	}
 
-    int ShrinkObjectY (GameObject g)
+    public int ShrinkObjectY (GameObject g)
     {
         StartCoroutine(ShrinkObjectYCoroutine(g, shrinkAmount, shrinkSpeed));
         return 1;
     }
 
-    int GrowObjectY(GameObject g)
+    public int GrowObjectY(GameObject g)
     {
         StartCoroutine(ShrinkObjectYCoroutine(g, -shrinkAmount, shrinkSpeed));
         return 1;
     }
 
-    int PushObjectX(GameObject g)
+    public int PushObjectX(GameObject g)
     {
         StartCoroutine(PushObjectXCoroutine(g, pushDist, pushSpeed));
         return 1;
     }
+    
+	public int PushObjectY(GameObject g)
+	{
+		StartCoroutine(PushObjectYCoroutine(g, pushDist, pushSpeed));
+		return 1;
+	}
 
-    int PullObjectX(GameObject g)
+	public int PullObjectY(GameObject g)
+	{
+		StartCoroutine(PushObjectYCoroutine(g, -pushDist, pushSpeed));
+		return 1;
+	}
+	
+    public int PullObjectX(GameObject g)
     {
         StartCoroutine(PushObjectXCoroutine(g, -pushDist, pushSpeed));
         return 1;
@@ -61,7 +74,7 @@ public class Button : MyMonoBehaviour
         }
     }
 
-    IEnumerator PushButtonCoroutine ()
+    public virtual IEnumerator PushButtonCoroutine ()
     {
         Transform t = pushableElement.transform;
         Vector3 target = t.position + new Vector3(0, -buttonPushDist, 0);
@@ -87,11 +100,25 @@ public class Button : MyMonoBehaviour
         }
         if (move)
         {
-            DoAction = PushObjectX;
+        	if (moveAxis == "x")
+        	{
+				DoAction = PushObjectX;
+        	}
+            else
+            {
+				DoAction = PushObjectY;
+            }
 
             if (pushed)
             {
-                DoAction = PullObjectX;
+            	if (moveAxis == "x")
+            	{
+					DoAction = PullObjectX;
+            	}
+            	else
+        		{
+					DoAction = PullObjectY;
+        		}
             }
             
             DoAction(actionTarget);
@@ -132,7 +159,7 @@ public class Button : MyMonoBehaviour
         }
     }
 
-    IEnumerator PushObjectXCoroutine(GameObject g, float amount, float speed)
+    public IEnumerator PushObjectXCoroutine(GameObject g, float amount, float speed)
     {
         Transform t = g.transform;
         Vector3 target = t.position - new Vector3(amount, 0, 0);
@@ -145,4 +172,18 @@ public class Button : MyMonoBehaviour
             t.position = Vector3.Lerp(t.position, target, accum);
         }
     }
+    
+	public IEnumerator PushObjectYCoroutine(GameObject g, float amount, float speed)
+	{
+		Transform t = g.transform;
+		Vector3 target = t.position - new Vector3(0, amount, 0);
+		float accum = 0.0f;
+		
+		while (t != null && t.position != target)
+		{
+			yield return new WaitForEndOfFrame();
+			accum += speed;
+			t.position = Vector3.Lerp(t.position, target, accum);
+		}
+	}
 }
