@@ -6,7 +6,7 @@ public class Grab : MyMonoBehaviour
 	public GameObject grabbedObject;
 	public float radius = 1.0f;
     public float holdHeight;
-    bool holding = false;
+    public bool holding = false;
 
 	// Use this for initialization
 	void Start () 
@@ -14,6 +14,14 @@ public class Grab : MyMonoBehaviour
 
 	}
 	
+    public void Release()
+    {
+        grabbedObject.transform.parent = null;
+        //grabbedObject.GetComponent<Rigidbody2D>().isKinematic = false;
+        grabbedObject = null;
+        holding = false;
+    }
+
 	void Update () 
 	{
         if (grabbedObject == null)
@@ -25,10 +33,7 @@ public class Grab : MyMonoBehaviour
         {
             if (holding)
             {
-                grabbedObject.transform.parent = null;
-                holding = false;
-                grabbedObject.GetComponent<Rigidbody2D>().isKinematic = false;
-                grabbedObject = null;
+                Release();
             }
             else
             {
@@ -36,11 +41,11 @@ public class Grab : MyMonoBehaviour
 
                 if (tograb != null)
                 {
-                    holding = true;
                     grabbedObject = tograb;
                     grabbedObject.transform.position = gameObject.transform.position + new Vector3(0, holdHeight, 0);
-                    grabbedObject.GetComponent<Rigidbody2D>().isKinematic = true;
+                    //grabbedObject.GetComponent<Rigidbody2D>().isKinematic = true;
                     grabbedObject.transform.parent = gameObject.transform;
+                    holding = true;
                 }
             }
         }
