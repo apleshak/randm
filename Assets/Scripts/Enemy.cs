@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Enemy : MyMonoBehaviour
 {
+    public GameObject hitSpot;
     public float moveSpeed = 0.3f;
     public float detectDist = 4.0f;
     public float stunDuration = 2.0f;
@@ -54,29 +55,34 @@ public class Enemy : MyMonoBehaviour
 
         Transform t = other.transform;
         float speed = r.velocity.magnitude;
-        
-        if (speed > 0.5)
-        {
-            StartCoroutine(Stunned());
-        }
 
-        if (t.gameObject.tag == "Box")
+        if (t.gameObject.tag == "Box" && speed > 0.5)
         {
+            Stunme();
             GameObject.Destroy(t.gameObject);
         }
     }
 
-    IEnumerator Stunned()
+    public void Stunme()
     {
-        float accum = 0.0f;
+        StartCoroutine(_Stun());
+    }
 
-        while (accum <= stunDuration)
+    // Update is called once per frame
+    IEnumerator _Stun()
+    {
+        hitSpot.active = true;
+        stunned = true;
+
+        float count = 0;
+
+        while (count < stunDuration)
         {
-            stunned = true;
-            accum += Time.deltaTime;
+            count += Time.deltaTime;
             yield return new WaitForEndOfFrame();
         }
 
         stunned = false;
+        hitSpot.active = false;
     }
 }
