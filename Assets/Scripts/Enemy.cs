@@ -4,34 +4,45 @@ using UnityEngine;
 
 public class Enemy : MyMonoBehaviour
 {
-    public float moveSpeed = 0.1f;
+    public float moveSpeed = 0.3f;
     public float detectDist = 4.0f;
     public float stunDuration = 2.0f;
     bool stunned;
     public bool enabled = false;
     Rigidbody2D r;
-	// Use this for initialization
-	void Start ()
+    UnityStandardAssets._2D.PlatformerCharacter2D m_character;
+    // Use this for initialization
+    void Start ()
     {
         r = GetComponent<Rigidbody2D>();
-        stunned = false;	
-	}
+        stunned = false;
+        m_character = GetComponent<UnityStandardAssets._2D.PlatformerCharacter2D>();
+    }
 	
 	// Update is called once per frame
 	void Update ()
     {
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (!enabled)
             return;
 
         if (!stunned)
         {
-            if (Vector3.Distance(gameObject.transform.position, GameObject.FindGameObjectWithTag("Player").transform.position) < detectDist)
+            if (Vector3.Distance(gameObject.transform.position, player.transform.position) < detectDist)
             {
-                gameObject.transform.position = Vector3.Lerp(gameObject.transform.position, GameObject.FindGameObjectWithTag("Player").transform.position, moveSpeed);
+                if (transform.position.x < player.transform.position.x)
+                {
+                    m_character.Move(1.0f*moveSpeed, false, false);
+                }
+                else
+                {
+                    m_character.Move(-1.0f*moveSpeed, false, false);
+                }
+                //gameObject.transform.position = Vector3.Lerp(gameObject.transform.position, GameObject.FindGameObjectWithTag("Player").transform.position, moveSpeed);
             }
             else
             {
-
+                m_character.Move(0.0f, false, false);
             }
         }
 	}

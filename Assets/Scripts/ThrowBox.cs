@@ -5,6 +5,7 @@ using UnityEngine;
 public class ThrowBox : MyMonoBehaviour
 {
     Grab g;
+    public float throwForce = 1000.0f;
 
 	// Use this for initialization
 	void Start ()
@@ -23,8 +24,15 @@ public class ThrowBox : MyMonoBehaviour
             {
                 g.Release();
                 Rigidbody2D r = grabbed.GetComponent<Rigidbody2D>();
-                r.AddForce(new Vector2(10, 10));
-                Debug.Log("doing");
+                UnityStandardAssets._2D.PlatformerCharacter2D cc = gameObject.GetComponent<UnityStandardAssets._2D.PlatformerCharacter2D>();
+                if (cc.m_FacingRight)
+                {
+                    r.AddForce((Vector2)(gameObject.transform.forward + new Vector3(throwForce, 0, 0)));
+                }
+                else
+                {
+                    r.AddForce((Vector2)(gameObject.transform.forward + new Vector3(-throwForce, 0, 0)));
+                }
             }
         }
 	}
